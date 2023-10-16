@@ -37,7 +37,7 @@ contract Raffle is VRFConsumerBaseV2 {
     address payable[] private s_players;
 
     /* Events */
-    event RaffleEnter(address indexed player);
+    event EnteredRaffle(address indexed player);
     event PickedWinner(address indexed winner);
 
     constructor(
@@ -60,7 +60,7 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     function enterRaffle() public payable {
-        require(msg.value >= i_entranceFee, "Not enough value sent");
+        //require(msg.value >= i_entranceFee, "Not enough value sent");
         // require(s_raffleState == RaffleState.OPEN, "Raffle is not open");
         if (msg.value < i_entranceFee) {
             revert Raffle__NotEnoughEthSent();
@@ -72,7 +72,7 @@ contract Raffle is VRFConsumerBaseV2 {
         s_players.push(payable(msg.sender));
         // Emit an event when we update a dynamic array or mapping
         // Named events with the function name reversed
-        emit RaffleEnter(msg.sender);
+        emit EnteredRaffle(msg.sender);
     }
 
     // When is the winner supposed to be picked ?
@@ -143,5 +143,18 @@ contract Raffle is VRFConsumerBaseV2 {
         if (!success) {
             revert Raffle__TransferFailed();
         }
+    }
+
+    /** Getter Function **/
+    function getEntraceFee() external view returns (uint256) {
+        return i_entranceFee;
+    }
+
+    function getRaffleState() external view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getPlayer(uint256 indexOfPlayer) external view returns (address) {
+        return s_players[indexOfPlayer];
     }
 }
