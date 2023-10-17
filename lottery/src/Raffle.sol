@@ -99,7 +99,7 @@ contract Raffle is VRFConsumerBaseV2 {
 
     function performUpkeep(bytes calldata /* performData */) external {
         (bool upkeepNeeded, ) = checkUpkeep("");
-        if (upkeepNeeded) {
+        if (!upkeepNeeded) {
             revert Raffle_UpkeepNotNeeded(
                 address(this).balance,
                 s_players.length,

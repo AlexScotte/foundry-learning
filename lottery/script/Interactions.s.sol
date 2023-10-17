@@ -112,21 +112,12 @@ contract AddConsumer is Script {
         console.log("Using vrfCoordinator: ", vrfCoordinator);
         console.log("On chainID: ", block.chainid);
 
-        if (block.chainid == 31337) {
-            vm.startBroadcast();
-            VRFCoordinatorV2Mock(vrfCoordinator).fundSubscription(
-                subscriptionId,
-                FUND_AMOUNT
-            );
-            vm.stopBroadcast();
-        } else {
-            vm.startBroadcast();
-            VRFCoordinatorV2Mock(vrfCoordinator).addConsumer(
-                subscriptionId,
-                raffle
-            );
-            vm.stopBroadcast();
-        }
+        vm.startBroadcast();
+        VRFCoordinatorV2Mock(vrfCoordinator).addConsumer(
+            subscriptionId,
+            raffle
+        );
+        vm.stopBroadcast();
     }
 
     function run() external {
