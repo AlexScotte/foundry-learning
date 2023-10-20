@@ -36,7 +36,8 @@ contract RaffleTest is Test {
             entranceFee,
             callbackGasLimit,
             vrfCoordinator,
-            linkTokenAddress
+            linkTokenAddress,
+
         ) = helperConfig.activeNetworkConfig();
         vm.deal(PLAYER, STARTING_USER_BALANCE);
     }
@@ -196,10 +197,18 @@ contract RaffleTest is Test {
     // fullfillRandomWords
     ///////////////////
 
+    // Allow to skip test if we are not on local blockchain
+    modifier skipFork() {
+        if (block.chainid != 31337) {
+            return;
+        }
+        _;
+    }
+
     // Foundry will generate a lot of randomRequestId and test several time the function
     function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(
         uint256 randomRequestId
-    ) public raffleEnteredAndTimePassed {
+    ) public raffleEnteredAndTimePassed skipFork {
         // Arrange
         vm.expectRevert("nonexistent request");
         VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(
@@ -211,6 +220,7 @@ contract RaffleTest is Test {
     function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney()
         public
         raffleEnteredAndTimePassed
+        skipFork
     {
         // Arrange
         uint256 additionalEntrants = 5;

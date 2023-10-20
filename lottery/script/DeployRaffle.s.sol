@@ -8,7 +8,6 @@ import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.
 
 contract DeployRaffle is Script {
     function run() external returns (Raffle, HelperConfig) {
-        // Before startBroadcast -> Not a "real" tx
         HelperConfig helperConfig = new HelperConfig();
         (
             uint64 subscriptionId,
@@ -17,25 +16,27 @@ contract DeployRaffle is Script {
             uint256 entranceFee,
             uint32 callbackGasLimit,
             address vrfCoordinator,
-            address linkTokenAddress
+            address linkTokenAddress,
+            uint256 deployerKey
         ) = helperConfig.activeNetworkConfig();
 
         if (subscriptionId == 0) {
             // Create a new subscription
             CreateSubscription cs = new CreateSubscription();
-            subscriptionId = cs.createSubscription(vrfCoordinator);
+            subscriptionId = cs.createSubscription(vrfCoordinator, deployerKey);
 
             // Fund it
             FundSubscription fs = new FundSubscription();
             fs.fundSubscription(
                 vrfCoordinator,
                 subscriptionId,
-                linkTokenAddress
+                linkTokenAddress,
+                deployerKey
             );
         }
 
         // After startBroadcast -> Real tx !
-        vm.startBroadcast();
+        vm.startBroadcast(deployerKey);
         Raffle raffle = new Raffle(
             subscriptionId,
             gasLane,
@@ -48,7 +49,12 @@ contract DeployRaffle is Script {
 
         // Add consumer
         AddConsumer ac = new AddConsumer();
-        ac.addConsumer(address(raffle), vrfCoordinator, subscriptionId);
+        ac.addConsumer(
+            address(raffle),
+            vrfCoordinator,
+            subscriptionId,
+            deployerKey
+        );
         return (raffle, helperConfig);
     }
 }
