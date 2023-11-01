@@ -44,3 +44,4 @@ deploy:
 
 mint:
 	@forge script script/Interactions.s.sol:MintBasicNft $(NETWORK_ARGS)
+
