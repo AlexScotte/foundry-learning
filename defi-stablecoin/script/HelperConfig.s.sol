@@ -62,7 +62,7 @@ contract HelperConfig is Script {
         );
         MockV3Aggregator btcUsdPriceFeed = new MockV3Aggregator(
             DECIMALS,
-            ETH_USD_PRICE
+            BTC_USD_PRICE
         );
         ERC20Mock wbtcMock = new ERC20Mock(
             "Wrapped Bitcoin",
@@ -74,8 +74,8 @@ contract HelperConfig is Script {
 
         NetworkConfig memory anvilConfig = NetworkConfig({
             wethUsdPriceFeed: address(ethUsdPriceFeed),
-            wbtcUsdPriceFeed: address(btcUsdPriceFeed),
             weth: address(wethMock),
+            wbtcUsdPriceFeed: address(btcUsdPriceFeed),
             wbtc: address(wbtcMock),
             deployerKey: DEFAULT_ANVIL_KEY
         });
