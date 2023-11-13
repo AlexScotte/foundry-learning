@@ -7,4 +7,9 @@ remappings = [
     "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/",
     "@openzeppelin/contracts=lib/openzeppelin-contracts/contracts",
 ]
+
+[invariant]
+runs = 1000           # Number of runs
+depth = 128           # Number of call in a single run
+fail_on_revert = true
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
