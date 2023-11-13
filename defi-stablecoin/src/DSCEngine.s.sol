@@ -30,6 +30,7 @@ import {DecentralizedStableCoin} from "./DecentralizedStableCoin.s.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {OracleLib} from "./librairies/OracleLib.s.sol";
 
 /**
  * @title DSCEngine
@@ -49,6 +50,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/Ag
  * as well as depositing & withdrawing collateral
  * @notice This contract is VERY loosely based on the MakerDAO DSS (DAI) system.
  */
+
 contract DSCEngine is ReentrancyGuard {
     ////////////
     // ERRORS //
@@ -61,6 +63,11 @@ contract DSCEngine is ReentrancyGuard {
     error DSCEngine_MintFailed();
     error DSCEngine_HealthFactorOk();
     error DSCEngine_HealthFactorNotImproved();
+
+    ///////////
+    // TYPES //
+    ///////////
+    using OracleLib for AggregatorV3Interface;
 
     /////////////////////
     // STATE VARIABLES //
@@ -346,7 +353,7 @@ contract DSCEngine is ReentrancyGuard {
 
     function _getUsdValue(address token, uint256 amount) private view returns (uint256) {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
-        (, int256 price,,,) = priceFeed.latestRoundData();
+        (, int256 price,,,) = priceFeed.staleCheckLatestRoundData();
         // 1 ETH = $1000
         // The returned value from CL will be 1000 * 1e8
         return ((uint256(price) * ADDITIONAL_FEED_PRECISION) * amount) / PRECISION;
@@ -354,7 +361,7 @@ contract DSCEngine is ReentrancyGuard {
 
     function getTokenAmountFromUsd(address token, uint256 usdAmountInWei) public view returns (uint256) {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
-        (, int256 price,,,) = priceFeed.latestRoundData();
+        (, int256 price,,,) = priceFeed.staleCheckLatestRoundData();
         // ($10e18 * 1e18) / ($2000e8 * 1e10)
         // 0.005
         return ((usdAmountInWei * PRECISION) / uint256(price)) / ADDITIONAL_FEED_PRECISION;
