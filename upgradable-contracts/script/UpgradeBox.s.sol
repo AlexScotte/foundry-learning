@@ -3,8 +3,8 @@ pragma solidity ^0.8.19;
 
 import {Script, console} from "forge-std/Script.sol";
 import {DevOpsTools} from "lib/foundry-devops/src/DevOpsTools.sol";
-import {BoxV2} from "../src/BoxV2.sol";
 import {BoxV1} from "../src/BoxV1.sol";
+import {BoxV2} from "../src/BoxV2.sol";
 
 contract UpgradeBox is Script {
     function setUp() public {}
