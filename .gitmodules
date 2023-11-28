@@ -58,3 +58,6 @@
 [submodule "upgradable-contracts/lib/foundry-devops"]
 	path = upgradable-contracts/lib/foundry-devops
 	url = https://github.com/chainaccelorg/foundry-devops
+[submodule "dao/lib/forge-std"]
+	path = dao/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
